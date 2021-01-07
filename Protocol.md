@@ -11,7 +11,7 @@ Servers are located by json file http://splix.io/json/servers.json
 
 | Packet name | Name in game              | Description
 |:-----------:|---------------------------|------------
-| 1           | UPDATE_BLOCKS             |
+| 1           | UPDATE_BLOCKS             | Not used? Didn't really see in actual game data. Maybe it's used in teams? All my data is for the regular mode. 
 | 2           | PLAYER_POS                | Contains the position of any player within view
 | 3           | FILL_AREA                 |
 | 4           | SET_TRAIL                 |
@@ -34,6 +34,14 @@ Servers are located by json file http://splix.io/json/servers.json
 | 21          | PONG                      | Sent when a player ping the server
 
 ### Packet "1"
+Seems to update a single block with an id, despite the plural name
+
+|Bytes | Data type | Description
+|:-----|-----------|-------------------
+| 1-2  | uint16    | X coord of block
+| 3-4  | uint16    | Y coord of block
+| 5    | uint8     | Block id
+
 
 ### Packet "2"
 
@@ -47,19 +55,44 @@ Contains the position of any player within view
 
 ### Packet "3"
 
+Fills a specified area with a single block type. Used for players boxing off areas. Needs more work on figuring out. 
+
 | Bytes | Data type | Description
 |:------|-----------|------------
-| 1-2   | uint8     |
-| 3-4   | uint8     |
-| 5-6   | uint8     |
-| 7-8   | uint8     |
-| 9     | uint8     | 
+| 1-2   | uint16    | Start X
+| 3-4   | uint16    | Start Y
+| 5-6   | uint16    | Fill X
+| 7-8   | uint16    | Fill Y
+| 9     | uint8     | Block id?
+| 10    | uint8     | ???????
 
 ### Packet "4"
 
 ### Packet "5"
+Sent when a player in view dies, i guess. Bytes 3-6 aren't always sent for some reason, and it seems to move the player???? You would think that's for the teams mode but the message occured in regular gameplay?? (at least I think, the game data is 2 years old, I don't remember what I did for it, see realdata/splixdata and realdata/splixdata2 in splixio-customserver/splixio-utilities)
+
+|Bytes | Data type | Description
+|:-----|-----------|-------------------
+| 1-2  | uint16    | Player id of who died
+| 3-4  | uint16    | Moves player to this X coord i think
+| 5-6  | uint16    | Moves player to this Y coord i think
+
 
 ### Packet "6"
+Used for sending massive chunks of blocks to the client. It sends the block id of every block in the specified range. 
+
+|Bytes | Data type | Description
+|:-----|-----------|-------------------
+| 1-2  | uint16    | Start X parameter
+| 3-4  | uint16    | Start Y parameter
+| 5-6  | uint16    | End X parameter
+| 7-8  | uint16    | End Y parameter
+
+Then this loops for every block in the range you specified (approx (endX-startX)*(endY-startY))
+
+|Bytes | Data type | Description
+|:-----|-----------|-------------------
+| 9-?  | uint8     | Block id of block
 
 ### Packet "7"
 
@@ -107,7 +140,7 @@ For every player:
 
 | Bytes                                 | Data type | Description
 |:--------------------------------------|-----------|--------------------------------
-| (index to index + 4)                  | uint32     | The player's score
+| (index to index + 4)                  | uint32    | The player's score
 | (index + 5)                           | uint8     | The length of the player's name
 | (index + 6 to end of username length) | uint8     | The player's name
 
@@ -136,6 +169,14 @@ Header only sometimes, but also can contain information on death:
 | 18-end| uint8     | (ONLY if you died by a player) The name of the person who killed you
 
 ### Packet "14"
+Contains the minimap. Essentially a simple monochrome bitmap, can't remember whether 0,0 is in bottom left or top left,
+though. Each bit tells you whether it's white or black, so each bit corrresponds to a pixel on the minimap. 
+
+|Bytes | Data type | Description
+|:-----|-----------|-------------------
+| 1    | uint8     | X start offset probably. Multipled by 20. 
+| 2-?  | uint8?    | Each bit in each byte corresponds to a pixel in the minimap
+
 
 ### Packet "15"
 Contains skin of a specific player
