@@ -35,7 +35,7 @@ Servers are located by json file http://splix.io/json/servers.json
 | 22          | UNDO_PLAYER_DIE           | 
 | 23          | TEAM_LIFE_COUNT           | 
 
-### Packet "1"
+### Packet "1" UPDATE_BLOCKS
 Seems to update a single block with an id, despite the plural name
 
 |Bytes | Data type | Description
@@ -45,7 +45,7 @@ Seems to update a single block with an id, despite the plural name
 | 5    | uint8     | Block id
 
 
-### Packet "2"
+### Packet "2" PLAYER_POS
 
 Contains the position of any player within view
 
@@ -57,7 +57,7 @@ Contains the position of any player within view
 | 7     | uint8     | The direction the player is headed (0-4)
 | 8     | uint8     | Show trail flag (not included in all packets)
 
-### Packet "3"
+### Packet "3" FILL_AREA
 
 Fills a specified area with a single block type. Used for players boxing off areas.
 
@@ -70,9 +70,9 @@ Fills a specified area with a single block type. Used for players boxing off are
 | 9     | uint8     | Color
 | 10    | uint8     | Pattern
 
-### Packet "4"
+### Packet "4" SET_TRAIL
 
-### Packet "5"
+### Packet "5" PLAYER_DIE
 Sent when a player in view dies, i guess. Bytes 3-6 aren't always sent for some reason, and it seems to move the player???? You would think that's for the teams mode but the message occured in regular gameplay?? (at least I think, the game data is 2 years old, I don't remember what I did for it, see realdata/splixdata and realdata/splixdata2 in splixio-customserver/splixio-utilities)
 
 |Bytes | Data type | Description
@@ -82,7 +82,7 @@ Sent when a player in view dies, i guess. Bytes 3-6 aren't always sent for some 
 | 5-6  | uint16    | Moves player to this Y coord i think
 
 
-### Packet "6"
+### Packet "6" CHUNK_OF_BLOCKS
 Used for sending massive chunks of blocks to the client. It sends the block id of every block in the specified range. 
 
 |Bytes | Data type | Description
@@ -98,7 +98,7 @@ Then this loops for every block in the range you specified (approx (endX-startX)
 |:-----|-----------|-------------------
 | 9-?  | uint8     | Block id of block
 
-### Packet "7"
+### Packet "7" REMOVE_PLAYER
 
 Remove a player from view
 
@@ -106,7 +106,7 @@ Remove a player from view
 |:------|-----------|------------
 | 1-2   | uint16     | ID of player to remove (ID is 0 = you)
 
-### Packet "8"
+### Packet "8" PLAYER_NAME
 
 Contains name of a specified player
 
@@ -115,7 +115,7 @@ Contains name of a specified player
 | 1-2              | uint16    | ID of player to set name (ID is 0 = you)
 | 3 - packet end   | uint8     | Username of the player
 
-### Packet "9"
+### Packet "9" MY_SCORE
 
 Contains your own score
 
@@ -124,7 +124,7 @@ Contains your own score
 | 1-4   | uint32     | Your score as an integer
 | 5-6   | uint16     | (OPTIONAL) Your kills as integer
 
-### Packet "10"
+### Packet "10" MY_RANK
 
 Contains your own rank
 
@@ -132,7 +132,7 @@ Contains your own rank
 |:------|-----------|------------
 | 1-2   | uint16     | Your rank as an integer
 
-### Packet "11"
+### Packet "11" LEADERBOARD
 
 Contains every single leaderboard value
 
@@ -148,7 +148,7 @@ For every player:
 | (index + 5)                           | uint8     | The length of the player's name
 | (index + 6 to end of username length) | uint8     | The player's name
 
-### Packet "12"
+### Packet "12" MAP_SIZE
 
 Defines the width and height of the map
 
@@ -156,7 +156,7 @@ Defines the width and height of the map
 |:------|-----------|------------
 | 1-2   | uint16     | Size of the map in integer (Server default is 600)
 
-### Packet "13"
+### Packet "13" YOU_DED
 
 Sent when you died
 
@@ -172,7 +172,7 @@ Header only sometimes, but also can contain information on death:
 | 17    | uint8     | The death type of how you died
 | 18-end| uint8     | (ONLY if you died by a player) The name of the person who killed you
 
-### Packet "14"
+### Packet "14" MINIMAP
 Contains the minimap. Essentially a simple monochrome bitmap, can't remember whether 0,0 is in bottom left or top left,
 though. Each bit tells you whether it's white or black, so each bit corrresponds to a pixel on the minimap. 
 
@@ -182,7 +182,7 @@ though. Each bit tells you whether it's white or black, so each bit corrresponds
 | 2-?  | uint8?    | Each bit in each byte corresponds to a pixel in the minimap
 
 
-### Packet "15"
+### Packet "15" PLAYER_SKIN
 Contains skin of a specific player
 
 | Bytes | Data type | Description
@@ -191,43 +191,51 @@ Contains skin of a specific player
 | 3     | uint8     | Player color
 | 4     | uint8     | Player block pattern
 
-### Packet "16"
+### Packet "16" EMPTY_TRAIL_WITH_LAST_POS
 
-### Packet "17"
+### Packet "17" READY
 Sent when the server validates player spawn.
 Sent only packet header.
 
-### Packet "18"
+### Packet "18" PLAYER_HIT_LINE
 
-### Packet "19"
+### Packet "19" REFRESH_AFTER_DIE
 
-### Packet "20"
+### Packet "20" PLAYER_HONK
 Sent when a player within view honks
 
 | Bytes | Data type | Description
 |:------|-----------|-------------------------------------------------------------------
 |   1   | uint8     | Honk size (value 0-255, any bigger and the server will drop packet)
 
-### Packet "21"
+### Packet "21" PONG
 Sent when a player pings the server.
 Sent only packet header.
+
+### Packet "22" UNDO_PLAYER_DIE
+
+### Packet "23" TEAM_LIFE_COUNT
 
 ## Client
 
 All messages are send as Uint8Array.
 
-| Packet name | Name in game     | Description
-|:-----------:|------------------| ------------
-| 1           | UPDATE_DIR       | Update direction
-| 2           | SET_USERNAME     | Set username
-| 3           | SKIN             | Set skin
-| 4           | READY            | Sent after username and skin packet are send to initiate player spawn
-| 5           | REQUEST_CLOSE    | Unused in game code
-| 6           | HONK             | Send honk (honk is when you press space / hold down for a bigger honk size)
-| 7           | PING             | Ping server
-| 8           | REQUEST_MY_TRAIL | Request for your trail (the path drawn when not in native territory)
+| Packet name | Name in game      | Description
+|:-----------:|-------------------| ------------
+| 1           | UPDATE_DIR        | Update direction
+| 2           | SET_USERNAME      | Set username
+| 3           | SKIN              | Set skin
+| 4           | READY             | Sent after username and skin packet are send to initiate player spawn
+| 5           | REQUEST_CLOSE     | Unused in game code
+| 6           | HONK              | Send honk (honk is when you press space / hold down for a bigger honk size)
+| 7           | PING              | Ping server
+| 8           | REQUEST_MY_TRAIL  | Request for your trail (the path drawn when not in native territory)
+| 9           | MY_TEAM_URL       |
+| 10          | SET_TEAM_USERNAME | 
+| 11          | VERSION           |
+| 12          | PATREON_CODE      |
 
-### Packet "1"
+### Packet "1" UPDATE_DIR
 
 Update direction
 
@@ -237,7 +245,7 @@ Update direction
 | 2-3   | uint16     | X Coordinate
 | 4-5   | uint16     | Y Coordinate
 
-### Packet "2"
+### Packet "2" SET_USERNAME
 
 Set username
 
@@ -245,7 +253,7 @@ Set username
 |:------|-----------|------------
 | 1-?   | string    | Send as decimal(ascii) value
 
-### Packet "3"
+### Packet "3" SKIN
 
 Set skin
 
@@ -254,16 +262,16 @@ Set skin
 | 1     | uint8     | Block color
 | 2     | uint8     | Block pattern
 
-### Packet "4"
+### Packet "4" READY
 
 Sent after username and skin packet are send to initiate player spawn.
 Sent only packet header.
 
-### Packet "5"
+### Packet "5" REQUEST_CLOSE
 
 Unused in game code, you can ignore this packet.
 
-### Packet "6"
+### Packet "6" HONK
 
 Send honk (honk is when you press space / hold down for a bigger honk size)
 
@@ -271,12 +279,20 @@ Send honk (honk is when you press space / hold down for a bigger honk size)
 |:------|-----------|------------
 | 1     | uint8     | 0-1000ms normalized to 0-255
 
-### Packet "7"
+### Packet "7" PING
 
 Ping server. Sent only packet header.
 
-### Packet "8"
+### Packet "8" REQUEST_MY_TRAIL
 
 Request for your trail (the path drawn when not in native territory). Sent only packet header.
+
+### Packet "9" MY_TEAM_URL
+
+### Packet "10" SET_TEAM_USERNAME
+
+### Packet "11" VERSION
+
+### Packet "12" PATREON_CODE
 
 ## Connection
