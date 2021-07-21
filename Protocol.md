@@ -55,7 +55,7 @@ Contains the position of any player within view
 | 3-4   | uint16    | The Y position of the player to update
 | 5-6   | uint16    | The ID of the player to update (ID is 0 = you)
 | 7     | uint8     | The direction the player is headed (0-4)
-| 8     | uint8     | Show trail flag (not included in all packets)
+| 8     | uint8     | (OPTIONAL) Add postion to player's trail (boolean)
 
 ### Packet "3" FILL_AREA
 
@@ -71,6 +71,21 @@ Fills a specified area with a single block type. Used for players boxing off are
 | 10    | uint8     | Pattern
 
 ### Packet "4" SET_TRAIL
+
+Sets the trail path of a player
+
+| Bytes | Data type | Description
+|:------|-----------|------------
+| 1-2   | uint16    | Player ID
+| 3-?   |           | (OPTIONAL) Trail
+
+For each position in Trail:
+
+| Bytes         | Data type | Description
+|:--------------|-----------|------------
+| ( i ) - (i+1) | uint16    | X Position
+| (i+2) - (i+3) | uint16    | Y Position
+
 
 ### Packet "5" PLAYER_DIE
 Sent when a player in view dies, i guess. Bytes 3-6 aren't always sent for some reason, and it seems to move the player???? You would think that's for the teams mode but the message occured in regular gameplay?? (at least I think, the game data is 2 years old, I don't remember what I did for it, see realdata/splixdata and realdata/splixdata2 in splixio-customserver/splixio-utilities)
