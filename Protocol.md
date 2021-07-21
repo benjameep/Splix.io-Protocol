@@ -59,16 +59,16 @@ Contains the position of any player within view
 
 ### Packet "3"
 
-Fills a specified area with a single block type. Used for players boxing off areas. Needs more work on figuring out. 
+Fills a specified area with a single block type. Used for players boxing off areas.
 
 | Bytes | Data type | Description
 |:------|-----------|------------
-| 1-2   | uint16    | Start X
-| 3-4   | uint16    | Start Y
-| 5-6   | uint16    | Fill X
-| 7-8   | uint16    | Fill Y
-| 9     | uint8     | Block id?
-| 10    | uint8     | ???????
+| 1-2   | uint16    | X Position
+| 3-4   | uint16    | Y Position
+| 5-6   | uint16    | Width
+| 7-8   | uint16    | Height
+| 9     | uint8     | Color
+| 10    | uint8     | Pattern
 
 ### Packet "4"
 
