@@ -32,6 +32,8 @@ Servers are located by json file http://splix.io/json/servers.json
 | 19          | REFRESH_AFTER_DIE         |
 | 20          | PLAYER_HONK               | Sent when a player within view honks
 | 21          | PONG                      | Sent when a player ping the server
+| 22          | UNDO_PLAYER_DIE           | 
+| 23          | TEAM_LIFE_COUNT           | 
 
 ### Packet "1"
 
@@ -41,9 +43,11 @@ Contains the position of any player within view
 
 | Bytes | Data type | Description
 |:------|-----------|------------
-| 1-2   | uint16     | The X position of the player to update
-| 3-4   | uint16     | The Y position of the player to update
+| 1-2   | uint16    | The X position of the player to update
+| 3-4   | uint16    | The Y position of the player to update
 | 5-6   | uint16    | The ID of the player to update (ID is 0 = you)
+| 7     | uint8     | The direction the player is headed (0-4)
+| 8     | uint8     | Show trail flag (not included in all packets)
 
 ### Packet "3"
 
